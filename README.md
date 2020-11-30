@@ -19,4 +19,4 @@ The model allows to predict the cell voltage and power density of a single redox
 * Power of the cell
 
 ### Core developers:
-R. P. Schaerer, M. Gael
+R. P. Schaerer, G. Mourouga
