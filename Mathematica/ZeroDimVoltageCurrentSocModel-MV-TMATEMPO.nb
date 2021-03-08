@@ -1,0 +1,553 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     23327,        545]
+NotebookOptionsPosition[     19823,        477]
+NotebookOutlinePosition[     20320,        495]
+CellTagsIndexPosition[     20277,        492]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["\<\
+0D-Voltage-Current-SoC Model 
+Applied to The MV-TMATEMPO System\
+\>", "Title",
+ CellChangeTimes->{{3.82316745218998*^9, 3.8231674727100973`*^9}, {
+  3.824186461303302*^9, 
+  3.824186461843478*^9}},ExpressionUUID->"0ae7d000-c865-485f-939b-\
+10e914aaeb72"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Needs", "[", 
+   RowBox[{"\"\<ZeroDimVoltageCurrentSocModel`\>\"", ",", 
+    RowBox[{"FileNameJoin", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+       "\"\<ZeroDimVoltageCurrentSocModel.wl\>\""}], "}"}], "]"}]}], "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.820213481666593*^9, 3.820213482770463*^9}, {
+  3.824186465917211*^9, 3.824186469790326*^9}},
+ CellLabel->"In[4]:=",ExpressionUUID->"d5529134-fbd7-4e6f-bf6c-77ee8709d708"],
+
+Cell[CellGroupData[{
+
+Cell["Set Model Parameters", "Section",
+ CellChangeTimes->{{3.823167489968874*^9, 3.823167492084284*^9}, {
+  3.8232253330734863`*^9, 3.82322534150917*^9}, {3.823609525592059*^9, 
+  3.8236095355813704`*^9}},ExpressionUUID->"23cdeee3-3b5c-4055-83e2-\
+75ee7f3dce51"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"Mass", " ", "density", " ", "of", " ", "MV", 
+    RowBox[{"(", "uncharged", ")"}], " ", 
+    RowBox[{"solution", " ", "[", 
+     RowBox[{"kg", "/", "l"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"\[Rho]MixNegInitFun", "[", "cOxNeg_", "]"}], ":=", 
+     RowBox[{"(", 
+      RowBox[{"0.9970479", "\[VeryThinSpace]", "+", 
+       RowBox[{"0.0683199", " ", "cOxNeg"}]}], ")"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Mass", " ", "density", " ", "of", " ", "TMATEMPO", 
+     RowBox[{"(", "uncharged", ")"}], " ", 
+     RowBox[{"solution", " ", "[", 
+      RowBox[{"kg", "/", "l"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"\[Rho]MixPosInitFun", "[", "cRedPos_", "]"}], ":=", " ", 
+     RowBox[{"(", 
+      RowBox[{"0.9970479", "\[VeryThinSpace]", "+", 
+       RowBox[{"0.0384504", " ", "cRedPos"}]}], ")"}]}], ";"}], 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{
+  3.823177339196423*^9, {3.823177649567978*^9, 3.823177793097533*^9}, {
+   3.823225442782628*^9, 3.8232254502117367`*^9}, {3.8232256183721333`*^9, 
+   3.823225621591835*^9}, {3.823225658106264*^9, 3.823225678491418*^9}, {
+   3.8236010914243317`*^9, 3.823601099833561*^9}},
+ CellLabel->"In[5]:=",ExpressionUUID->"a870fe10-12f9-464c-94f7-6eeaed17825f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Initial", " ", "molar", " ", "concentration", " ", "of", " ", "oxidized", 
+    " ", "species", " ", "in", " ", 
+    RowBox[{"negolyte", " ", "[", 
+     RowBox[{"mol", "/", "l"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"cOxNegSoc0Value", "=", " ", "1.49"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Initial", " ", "molar", " ", "concentration", " ", "of", " ", "reduced", 
+     " ", "species", " ", "in", " ", 
+     RowBox[{"posolyte", " ", "[", 
+      RowBox[{"mol", "/", "l"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"cRedPosSoc0Value", "=", " ", "1.12"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Initial", " ", "electrolyte", " ", "volume", " ", "per", " ", 
+     "electrolyte", " ", 
+     RowBox[{"compartment", " ", "[", "l", "]"}]}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"electrolyteVolValue", "=", " ", "0.01"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Molar", " ", "mass", " ", "of", " ", "oxidized", " ", "species", " ", 
+     "in", " ", 
+     RowBox[{"negolyte", " ", "[", 
+      RowBox[{"kg", "/", "mol"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"molarMassOxNegValue", "=", "0.25716"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Molar", " ", "mass", " ", "of", " ", "reduced", " ", "species", " ", 
+     "in", " ", 
+     RowBox[{"posolyte", " ", "[", 
+      RowBox[{"kg", "/", "mol"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"molarMassRedPosValue", "=", "0.249803"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Molar", " ", "mass", " ", "of", " ", 
+     RowBox[{"water", " ", "[", 
+      RowBox[{"kg", "/", "mol"}], "]"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"molarMassSolventValue", "=", " ", 
+     RowBox[{"18.01528", "/", "1000"}]}], ";"}]}]}]], "Input",
+ CellChangeTimes->{{3.823175434048477*^9, 3.8231754713742533`*^9}, {
+   3.823175518264821*^9, 3.823175766059018*^9}, {3.823175827959538*^9, 
+   3.823175862834703*^9}, {3.823175902080779*^9, 3.823175908712096*^9}, 
+   3.823175943127187*^9, {3.8231764437792187`*^9, 3.823176516392077*^9}, {
+   3.823176563571969*^9, 3.823176576240692*^9}, 3.823176615936964*^9, {
+   3.823176681257927*^9, 3.8231766815217752`*^9}, {3.82317672920787*^9, 
+   3.823176738857729*^9}, {3.823176770580991*^9, 3.8231767962306843`*^9}, {
+   3.8231768378349953`*^9, 3.823176838397337*^9}, 3.823176900364333*^9, {
+   3.8231769460390587`*^9, 3.823176952971694*^9}, {3.823176987397359*^9, 
+   3.823176992348136*^9}, {3.823177809342874*^9, 3.823177949905141*^9}, {
+   3.8231779998563433`*^9, 3.823178053115933*^9}, {3.823178099561014*^9, 
+   3.82317813486545*^9}, {3.82317816609256*^9, 3.823178233190886*^9}, {
+   3.823178308010042*^9, 3.8231783622395067`*^9}, {3.823602225067173*^9, 
+   3.8236022630128307`*^9}, 3.823605556700193*^9},
+ CellLabel->"In[7]:=",ExpressionUUID->"f349aa9b-b7f8-4628-8ccd-66abf5922271"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Initialize Model", "Section",
+ CellChangeTimes->{{3.8232253474281273`*^9, 3.8232253672762136`*^9}, {
+  3.823609537966732*^9, 
+  3.82360954075648*^9}},ExpressionUUID->"99c25e5e-0d50-46e4-90a4-\
+4b83b22b5c9f"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"initModel", "[", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"electrolyteVol", "\[Rule]", "electrolyteVolValue"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\[Rho]MixNegSoc0", "\[Rule]", " ", 
+      RowBox[{"\[Rho]MixNegInitFun", "[", "cOxNegSoc0Value", "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"\[Rho]MixPosSoc0", "\[Rule]", " ", 
+      RowBox[{"\[Rho]MixPosInitFun", "[", "cRedPosSoc0Value", "]"}]}], ",", 
+     " ", "\[IndentingNewLine]", 
+     RowBox[{"cOxNegSoc0", " ", "\[Rule]", "cOxNegSoc0Value"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"cRedPosSoc0", " ", "\[Rule]", "cRedPosSoc0Value"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"molarMassOxNeg", "\[Rule]", " ", "molarMassOxNegValue"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"molarMassRedPos", "\[Rule]", "molarMassRedPosValue"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"molarMassSolvent", "\[Rule]", "molarMassSolventValue"}]}], " ", 
+    "\[IndentingNewLine]", "}"}], "]"}], ";"}]], "Input",
+ CellChangeTimes->{{3.8231770115870237`*^9, 3.823177021283411*^9}, {
+   3.823177960142255*^9, 3.823177996209853*^9}, {3.8231780581377153`*^9, 
+   3.823178064890655*^9}, {3.82317819168188*^9, 3.823178194555442*^9}, {
+   3.8231782429090757`*^9, 3.823178261698513*^9}, {3.823178484435864*^9, 
+   3.823178488827385*^9}, 3.823178536191958*^9, {3.8232253750586977`*^9, 
+   3.823225375241499*^9}, {3.823313942062519*^9, 3.823313948211157*^9}, {
+   3.82360111742943*^9, 3.823601166950543*^9}, {3.823601574448268*^9, 
+   3.8236015870529547`*^9}, {3.8236017076493683`*^9, 3.82360173417622*^9}, 
+   3.8236022082105417`*^9, {3.8236022387806187`*^9, 3.823602249966466*^9}, {
+   3.823602562314904*^9, 3.823602568971575*^9}, {3.823602610395713*^9, 
+   3.82360262464052*^9}, {3.8236055240509768`*^9, 3.823605581139502*^9}, {
+   3.823609564140177*^9, 3.823609575048109*^9}},
+ CellLabel->"In[13]:=",ExpressionUUID->"2abd04b1-5adf-496f-b53c-8af90b760e21"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Visualize Amount of Substance vs SoC", "Section",
+ CellChangeTimes->{{3.823167499778016*^9, 
+  3.8231675137975693`*^9}},ExpressionUUID->"88a2087f-8b40-4085-bcaa-\
+ac972c291cf2"],
+
+Cell[BoxData[{
+ RowBox[{"plotElectroActiveSpeciesMoles", "[", "]"}], "\[IndentingNewLine]", 
+ RowBox[{"plotElectroActiveSpeciesMoleFractions", "[", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"plotElectroActiveSpeciesMolalities", "[", "]"}]}], "Input",
+ CellChangeTimes->{{3.823228068722495*^9, 3.823228068766143*^9}, {
+  3.823228107961741*^9, 3.823228108547309*^9}, {3.823228432258654*^9, 
+  3.823228442068563*^9}, {3.823230440606387*^9, 3.823230463130658*^9}, {
+  3.8232314534017553`*^9, 3.823231462784532*^9}, {3.823231594492508*^9, 
+  3.823231595594348*^9}},
+ CellLabel->"In[14]:=",ExpressionUUID->"f1b58de0-239b-4372-b394-7927bfa5a00f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Approximate Electrolyte Volume Changes", "Section",
+ CellChangeTimes->{{3.823225484610343*^9, 3.8232254894246187`*^9}, {
+  3.823227019797068*^9, 
+  3.8232270338604393`*^9}},ExpressionUUID->"115eeff0-32d6-4792-a1a5-\
+3adcbca96975"],
+
+Cell["\<\
+In the following we assume for simplicity that the electrolyte mixture is \
+ideal and the partial molar volumes of the oxidized and reduced species to be \
+equal.\
+\>", "Text",
+ CellChangeTimes->{{3.8232265325491447`*^9, 3.823226614236556*^9}, {
+  3.823226798962225*^9, 3.823226799748847*^9}, {3.8232270383382883`*^9, 
+  3.823227055212694*^9}, {3.823227722377552*^9, 
+  3.823227724717615*^9}},ExpressionUUID->"99d9fe44-3c7e-4527-8222-\
+799ccf371027"],
+
+Cell[BoxData[
+ RowBox[{"plotElectrolyteVolume", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.823604709932757*^9, 3.823604710020858*^9}},
+ CellLabel->"In[17]:=",ExpressionUUID->"7929fe91-faab-4ea4-9eb1-80ad449a784a"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Cell Voltage & Power Density vs SoC", "Section",
+ CellChangeTimes->{{3.823606799884919*^9, 
+  3.8236068091553917`*^9}},ExpressionUUID->"8580ca61-0fd4-4364-aa6d-\
+9c2b8d7475e2"],
+
+Cell[BoxData[{
+ RowBox[{"plotCellVoltageVsSoc", "[", 
+  RowBox[{"{", 
+   RowBox[{"lstElCurrentDensities", "->", 
+    RowBox[{"{", 
+     RowBox[{"100", ",", "50", ",", 
+      RowBox[{"-", "50"}], ",", 
+      RowBox[{"-", "100"}]}], "}"}]}], "}"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"plotCellPowerDensityVsSoc", "[", 
+  RowBox[{"{", 
+   RowBox[{"lstElCurrentDensities", "->", 
+    RowBox[{"{", 
+     RowBox[{"100", ",", "50", ",", 
+      RowBox[{"-", "50"}], ",", 
+      RowBox[{"-", "100"}]}], "}"}]}], "}"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.823254626630821*^9, 3.823254642838133*^9}, {
+  3.823254683384234*^9, 3.823254699780628*^9}, {3.823605846486392*^9, 
+  3.823605848036841*^9}, {3.823605964368679*^9, 3.823606016072166*^9}, {
+  3.8236060598598537`*^9, 3.823606069173161*^9}, {3.823606115727182*^9, 
+  3.823606119507928*^9}, {3.8236061823063707`*^9, 3.823606199091868*^9}, {
+  3.823606664432127*^9, 3.823606684032497*^9}, {3.823681567208619*^9, 
+  3.823681569707265*^9}, {3.823681601047719*^9, 3.823681609735766*^9}},
+ CellLabel->"In[18]:=",ExpressionUUID->"d1cda5c0-5518-4df2-966d-d2c103397074"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Cell Voltage & Power Density vs El. Current Density", "Section",
+ CellChangeTimes->{{3.823608000142602*^9, 
+  3.823608010514803*^9}},ExpressionUUID->"09c4c8b3-dfcf-4632-b325-\
+42f1197eb9c1"],
+
+Cell[BoxData[{
+ RowBox[{"plotCellVoltageVsElCurrentDensity", "[", 
+  RowBox[{"{", 
+   RowBox[{"lstSoc", "\[Rule]", " ", 
+    RowBox[{"{", 
+     RowBox[{"0.2", ",", "0.3", ",", "0.4"}], "}"}]}], "}"}], 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"plotCellPowerDensityVsElCurrentDensity", "[", 
+  RowBox[{"{", 
+   RowBox[{"lstSoc", "\[Rule]", " ", 
+    RowBox[{"{", 
+     RowBox[{"0.2", ",", "0.3", ",", "0.4"}], "}"}]}], "}"}], "]"}]}], "Input",\
+
+ CellChangeTimes->{{3.823234787130452*^9, 3.823234787174851*^9}, {
+   3.82323507484662*^9, 3.823235084589196*^9}, 3.823235260634763*^9, 
+   3.823235313128954*^9, {3.823235497026705*^9, 3.8232355189188747`*^9}, {
+   3.8232356100031223`*^9, 3.823235624266721*^9}, {3.823235988848922*^9, 
+   3.823236003716008*^9}},
+ CellLabel->"In[20]:=",ExpressionUUID->"cc9a2eb6-f10d-48db-a46a-34baeb11c0f2"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Visualize Losses (Activation, Concentration, Ohmic)", "Section",
+ CellChangeTimes->{{3.82360805783461*^9, 
+  3.823608075475606*^9}},ExpressionUUID->"ec1967a2-482d-43a2-9592-\
+a1d81fc791b2"],
+
+Cell[BoxData[
+ RowBox[{"plotVoltageLossesVsElCurrentDensity", "[", 
+  RowBox[{"{", 
+   RowBox[{"soc", "\[Rule]", " ", "0.01"}], "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.823232040949316*^9, 3.823232040994076*^9}, {
+   3.8232330069011497`*^9, 3.823233024436393*^9}, {3.823233139859416*^9, 
+   3.82323316164072*^9}, {3.823233254814253*^9, 3.823233278102179*^9}, {
+   3.823233309131419*^9, 3.823233312077976*^9}, {3.8232336231764803`*^9, 
+   3.823233627921516*^9}, {3.823609290926229*^9, 3.823609291093246*^9}, 
+   3.823609322211843*^9, {3.82360941947755*^9, 3.8236094351611156`*^9}},
+ CellLabel->"In[22]:=",ExpressionUUID->"ed761f4a-1a25-4d93-af6a-ecb367ea2ca9"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Show Voltage & Power Density vs SoC and El. Current Density", "Section",
+ CellChangeTimes->{{3.823608087422604*^9, 
+  3.8236080985825357`*^9}},ExpressionUUID->"40f67059-f480-406d-97b0-\
+e01cf7437c7e"],
+
+Cell[BoxData[
+ RowBox[{"plotCellVoltageVsSocAndCurrentDensity", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.823251496797312*^9, 3.8232514968644648`*^9}, {
+   3.82325242011115*^9, 3.823252420200899*^9}, 3.8232524591504087`*^9, {
+   3.823254129460956*^9, 3.82325413990016*^9}, {3.823256322826243*^9, 
+   3.823256333467945*^9}, {3.8232605458247023`*^9, 3.823260548682081*^9}, {
+   3.823313404112689*^9, 3.823313406590825*^9}, {3.823314647185989*^9, 
+   3.8233146495255613`*^9}, {3.823608146354436*^9, 3.82360814833602*^9}},
+ CellLabel->"In[23]:=",ExpressionUUID->"a89ca280-46f9-4b2c-b4da-e3feb3fcbdc1"],
+
+Cell[BoxData[
+ RowBox[{"plotCellPowerDensityVsSocAndCurrentDensity", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.823312407907886*^9, 3.8233125297689342`*^9}, {
+   3.8233125662425117`*^9, 3.8233126405396833`*^9}, {3.823312670620475*^9, 
+   3.823312753483012*^9}, {3.823312791218951*^9, 3.823312795110407*^9}, {
+   3.823312901288272*^9, 3.823312917553957*^9}, {3.8233130075763493`*^9, 
+   3.823313011355956*^9}, {3.823313069542152*^9, 3.823313074060416*^9}, {
+   3.82331312768121*^9, 3.8233131348358593`*^9}, {3.82331324423068*^9, 
+   3.823313290063199*^9}, 3.823313373094039*^9, {3.823314652788783*^9, 
+   3.823314654835136*^9}, 3.823422215986391*^9, {3.823608150671723*^9, 
+   3.8236081520455914`*^9}},
+ CellLabel->"In[24]:=",ExpressionUUID->"e8fc9846-2a1c-4f55-8e21-b717f461626f"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Sensitivity Studies", "Section",
+ CellChangeTimes->{{3.823315065706255*^9, 
+  3.823315071263356*^9}},ExpressionUUID->"e1ffedcd-961a-4733-9345-\
+0477bb990ff3"],
+
+Cell[CellGroupData[{
+
+Cell["Flow Rate", "Subsection",
+ CellChangeTimes->{{3.82331508231102*^9, 
+  3.8233151050629787`*^9}},ExpressionUUID->"2c4e81ed-584e-4868-aac8-\
+3e9d0f0a115c"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+    "cellVoltageVsElCurrentDensityPlot", ",", 
+     "powerDensityVsElCurrentDensityPlot"}], "}"}], "=", 
+   RowBox[{"plotCellPerformanceForDifferentFlowRates", "[", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"soc", "\[Rule]", " ", "0.5"}], ",", 
+      RowBox[{"lstFlowRates", "\[Rule]", " ", 
+       RowBox[{"{", 
+        RowBox[{"2", ",", "4", ",", "8", ",", "16", ",", "32"}], "}"}]}], ",", 
+      RowBox[{"ImageSize", "\[Rule]", " ", "400"}]}], "}"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", "cellVoltageVsElCurrentDensityPlot", 
+  "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Show", "[", "powerDensityVsElCurrentDensityPlot", "]"}]}], "Input",
+ CellChangeTimes->{{3.823313968656329*^9, 3.8233142061654587`*^9}, {
+   3.8233146980267344`*^9, 3.823314719177883*^9}, {3.823314761680049*^9, 
+   3.823314794626124*^9}, {3.823322578023415*^9, 3.823323006031437*^9}, {
+   3.823323039920323*^9, 3.823323191166156*^9}, {3.823323231151505*^9, 
+   3.823323274531021*^9}, {3.823323318413053*^9, 3.8233233215805883`*^9}, {
+   3.8233233703469477`*^9, 3.823323413204665*^9}, {3.823323482994864*^9, 
+   3.823323572906205*^9}, {3.823323642546752*^9, 3.823323731357522*^9}, {
+   3.823323771092186*^9, 3.8233237900835257`*^9}, {3.823323844379183*^9, 
+   3.823323882606834*^9}, 3.823324188444495*^9, {3.823324221805026*^9, 
+   3.823324271125681*^9}, {3.8233243285700483`*^9, 3.8233243286820374`*^9}, {
+   3.823325159499613*^9, 3.8233251633245068`*^9}, {3.823325373098155*^9, 
+   3.823325378116178*^9}, {3.823325473834756*^9, 3.823325498201868*^9}, {
+   3.8234201400885057`*^9, 3.823420146682715*^9}, {3.823420207613661*^9, 
+   3.823420271156852*^9}, {3.8234203218021193`*^9, 3.8234203852537127`*^9}},
+ CellLabel->"In[25]:=",ExpressionUUID->"7b1a9780-e037-45e2-9c0d-c44b6db89407"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Miscellaneous Plots", "Section",
+ CellChangeTimes->{{3.8236081138158817`*^9, 3.8236081254939737`*^9}, {
+  3.8236680052423162`*^9, 
+  3.823668024502898*^9}},ExpressionUUID->"8c8b8d99-3261-404a-9d92-\
+2e8968310a1e"],
+
+Cell[BoxData[
+ RowBox[{"plotLimitingElCurrentDensity", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.823314350995524*^9, 3.823314446598873*^9}, {
+  3.823314624107341*^9, 3.823314624708776*^9}},
+ CellLabel->"In[28]:=",ExpressionUUID->"b21746d7-c8ba-418c-bd9c-4f05a3469049"],
+
+Cell[BoxData[
+ RowBox[{"plotMaximumPowerDensity", "[", "]"}]], "Input",
+ CellChangeTimes->{{3.823255442216083*^9, 3.823255454339937*^9}, {
+   3.8232555083429623`*^9, 3.82325553714404*^9}, 3.8232557040324583`*^9, {
+   3.8232557353314953`*^9, 3.823255763327382*^9}, {3.8232558324451714`*^9, 
+   3.82325588696343*^9}, {3.823256135755026*^9, 3.8232561427281837`*^9}},
+ CellLabel->"In[29]:=",ExpressionUUID->"67b155dc-cb35-438c-8472-c18d10fcaf0f"],
+
+Cell["Perform some consistency checks", "Text",
+ CellChangeTimes->{{3.823605774437059*^9, 
+  3.823605798805389*^9}},ExpressionUUID->"4cedb818-ab03-4978-ae05-\
+5b609dbba17b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"On", "[", "Assert", "]"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{
+    RowBox[{"Abs", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"cellVoltageOcvAndBv", "[", 
+        RowBox[{"soc", ",", "0"}], "]"}], "-", 
+       RowBox[{"cellVoltageOcv", "[", "soc", "]"}]}], "//", "FullSimplify"}], 
+     "]"}], "<", 
+    SuperscriptBox["10", 
+     RowBox[{"-", "10"}]]}], "]"}], "//", 
+  "FullSimplify"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Assert", "[", 
+   RowBox[{
+    RowBox[{"Abs", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"cellVoltageOcvAndBv", "[", 
+        RowBox[{"soc", ",", "0"}], "]"}], "-", 
+       RowBox[{"cellVoltageOcv", "[", "soc", "]"}]}], "//", "FullSimplify"}], 
+     "]"}], "<", 
+    SuperscriptBox["10", 
+     RowBox[{"-", "10"}]]}], "]"}], "//", 
+  "FullSimplify"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Off", "[", "Assert", "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.823145088905241*^9, 3.8231450919190207`*^9}, {
+  3.823145947109499*^9, 3.823146060802445*^9}, {3.8231464420684958`*^9, 
+  3.823146472787112*^9}},
+ CellLabel->"In[30]:=",ExpressionUUID->"95a7b333-1caa-47a1-b467-48065c38be00"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1072, 1035},
+WindowMargins->{{-1920, Automatic}, {-41, Automatic}},
+TaggingRules->{
+ "WelcomeScreenSettings" -> {"FEStarting" -> False}, "TryRealOnly" -> False},
+FrontEndVersion->"12.2 for Mac OS X x86 (64-bit) (December 12, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"8cc8556d-f473-48f1-b899-db6c9904feab"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 264, 7, 160, "Title",ExpressionUUID->"0ae7d000-c865-485f-939b-10e914aaeb72"],
+Cell[847, 31, 518, 12, 30, "Input",ExpressionUUID->"d5529134-fbd7-4e6f-bf6c-77ee8709d708"],
+Cell[CellGroupData[{
+Cell[1390, 47, 263, 4, 67, "Section",ExpressionUUID->"23cdeee3-3b5c-4055-83e2-75ee7f3dce51"],
+Cell[1656, 53, 1394, 32, 115, "Input",ExpressionUUID->"a870fe10-12f9-464c-94f7-6eeaed17825f"],
+Cell[3053, 87, 3109, 69, 262, "Input",ExpressionUUID->"f349aa9b-b7f8-4628-8ccd-66abf5922271"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6199, 161, 213, 4, 67, "Section",ExpressionUUID->"99c25e5e-0d50-46e4-90a4-4b83b22b5c9f"],
+Cell[6415, 167, 2008, 35, 220, "Input",ExpressionUUID->"2abd04b1-5adf-496f-b53c-8af90b760e21"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8460, 207, 183, 3, 67, "Section",ExpressionUUID->"88a2087f-8b40-4085-bcaa-ac972c291cf2"],
+Cell[8646, 212, 640, 10, 73, "Input",ExpressionUUID->"f1b58de0-239b-4372-b394-7927bfa5a00f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[9323, 227, 236, 4, 67, "Section",ExpressionUUID->"115eeff0-32d6-4792-a1a5-3adcbca96975"],
+Cell[9562, 233, 460, 9, 58, "Text",ExpressionUUID->"99d9fe44-3c7e-4527-8222-799ccf371027"],
+Cell[10025, 244, 214, 3, 30, "Input",ExpressionUUID->"7929fe91-faab-4ea4-9eb1-80ad449a784a"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10276, 252, 182, 3, 67, "Section",ExpressionUUID->"8580ca61-0fd4-4364-aa6d-9c2b8d7475e2"],
+Cell[10461, 257, 1113, 22, 52, "Input",ExpressionUUID->"d1cda5c0-5518-4df2-966d-d2c103397074"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11611, 284, 196, 3, 67, "Section",ExpressionUUID->"09c4c8b3-dfcf-4632-b325-42f1197eb9c1"],
+Cell[11810, 289, 837, 18, 52, "Input",ExpressionUUID->"cc9a2eb6-f10d-48db-a46a-34baeb11c0f2"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12684, 312, 195, 3, 67, "Section",ExpressionUUID->"ec1967a2-482d-43a2-9592-a1d81fc791b2"],
+Cell[12882, 317, 664, 10, 30, "Input",ExpressionUUID->"ed761f4a-1a25-4d93-af6a-ecb367ea2ca9"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[13583, 332, 206, 3, 67, "Section",ExpressionUUID->"40f67059-f480-406d-97b0-e01cf7437c7e"],
+Cell[13792, 337, 599, 8, 30, "Input",ExpressionUUID->"a89ca280-46f9-4b2c-b4da-e3feb3fcbdc1"],
+Cell[14394, 347, 781, 11, 30, "Input",ExpressionUUID->"e8fc9846-2a1c-4f55-8e21-b717f461626f"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15212, 363, 164, 3, 67, "Section",ExpressionUUID->"e1ffedcd-961a-4733-9345-0477bb990ff3"],
+Cell[CellGroupData[{
+Cell[15401, 370, 158, 3, 54, "Subsection",ExpressionUUID->"2c4e81ed-584e-4868-aac8-3e9d0f0a115c"],
+Cell[15562, 375, 1853, 33, 94, "Input",ExpressionUUID->"7b1a9780-e037-45e2-9c0d-c44b6db89407"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[17464, 414, 219, 4, 67, "Section",ExpressionUUID->"8c8b8d99-3261-404a-9d92-2e8968310a1e"],
+Cell[17686, 420, 270, 4, 30, "Input",ExpressionUUID->"b21746d7-c8ba-418c-bd9c-4f05a3469049"],
+Cell[17959, 426, 442, 6, 30, "Input",ExpressionUUID->"67b155dc-cb35-438c-8472-c18d10fcaf0f"],
+Cell[18404, 434, 173, 3, 35, "Text",ExpressionUUID->"4cedb818-ab03-4978-ae05-5b609dbba17b"],
+Cell[18580, 439, 1215, 34, 98, "Input",ExpressionUUID->"95a7b333-1caa-47a1-b467-48065c38be00"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
