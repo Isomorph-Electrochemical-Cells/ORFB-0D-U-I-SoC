@@ -27,4 +27,5 @@ An interactive application of the model is provided as a Mathematica CDF file, w
 ### Core developers:
 R. P. Schaerer, G. Mourouga
 
-### Acknowledgements: This work is part of the SONAR project supported by the European Union / European Commission funding program Horizon 2020. 
+### Acknowledgements: 
+This work is part of the SONAR project supported by the European Union / European Commission funding program Horizon 2020. 
