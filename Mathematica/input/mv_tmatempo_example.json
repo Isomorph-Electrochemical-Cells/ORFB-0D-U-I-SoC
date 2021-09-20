@@ -1,0 +1,71 @@
+{
+    "model_parameters":
+    {
+        "charge_number_ox_pos": 2,
+        "charge_number_red_pos": 1,
+        "charge_number_ox_neg": 2,
+        "charge_number_red_neg": 1,
+        "charge_number_exchanged_ion": -1,
+        "charge_number_supporting_electrolyte_ion": 1,
+        "stoichiometric_coefficient_exchanged_ion_pos": 0,
+        "number_electron_transfer_pos": 1,
+        "stoichiometric_coefficient_exchanged_ion_neg": 0,
+        "number_electron_transfer_neg": 1,
+        "ohmic_cell_resistance": 0.286,
+        "temperature": 295.15,
+        "electrolyte_volume": 1e-5,
+        "electrode_length": 4e-3,
+        "electrode_width": 2.236e-2,
+        "electrode_height": 2.236e-2,
+        "specific_surface_area": 2e5,
+        "volumetric_flow_rate": 2.667e-7,
+        "formal_potential_neg": -0.66,
+        "formal_potential_pos": 0.62,
+        "reaction_rate_constant_neg": 3.3e-5,
+        "reaction_rate_constant_pos": 4.2e-5,
+        "electro_osmotic_drag_coefficient": 6,
+        "molar_concentration_supporting_electrolyte_ion_neg": 0.0,
+        "molar_concentration_supporting_electrolyte_ion_pos": 0.0,   
+        "molar_concentration_ox_neg_soc0": 1.49e3,
+        "molar_concentration_red_pos_soc0": 1.12e3,
+        "mass_transfer_coefficient_a": 3.3e-5,
+        "mass_transfer_coefficient_b": 0.9,
+        "molar_mass_solvent": 0.0180153,
+        "molar_mass_ox_neg": 0.25716,
+        "molar_mass_red_neg": 0.22171,
+        "molar_mass_ox_pos": 0.285253,
+        "molar_mass_red_pos": 0.249803,
+        "molar_mass_supporting_electrolyte": 0.0,
+        "partial_molar_volume_solvent": 0.0180555e-3,
+        "partial_molar_volume_ox_neg": 0.189e-3,
+        "partial_molar_volume_red_neg": 0.163e-3,
+        "partial_molar_volume_ox_pos": 0.233e-3,
+        "partial_molar_volume_red_pos": 0.212e-3,
+        "partial_molar_volume_supporting_electrolyte_neg": 0.0,
+        "partial_molar_volume_supporting_electrolyte_pos": 0.0,
+        "membrane_potential": "thermodynamics"
+    },
+    "study_parameters": 
+    {
+        "open_circuit_voltage": {"soc": 0.9},
+        "maximum_power_density": {"soc": 0.9},
+        "voltage_efficiency": {"low_cutoff_voltage": 0.9, "high_cutoff_voltage": 1.5, "el_current_density": 500},
+        "sensitivity_analysis": 
+        {
+            "num_samples": 100,
+            "electric_current_density": 800,
+            "state_of_charge": 0.5,
+            "parameters": 
+            [
+                {"name": "ohmic_cell_resistance", "range": [0.25, 0.45], "reference_value": "model_parameter"},
+                {"name": "formal_potential_neg", "range": [-0.7,-0.6], "reference_value": "model_parameter"},              
+                {"name": "reaction_rate_constant_neg", "range": [3.3e-6,3.3e-4], "reference_value": "model_parameter"},
+                {"name": "temperature", "range": [293.15, 297.15], "reference_value": "model_parameter"},
+                {"name": "electro_osmotic_drag_coefficient", "range": [0,6], "reference_value": "model_parameter"},
+                {"name": "volumetric_flow_rate", "range": [2.500e-7,2.833e-7], "reference_value": "model_parameter"},
+                {"name": "mass_transfer_coefficient_a", "range": [1e-5,1e-4], "reference_value": "model_parameter"} 
+            ]
+        }
+    }
+}
+

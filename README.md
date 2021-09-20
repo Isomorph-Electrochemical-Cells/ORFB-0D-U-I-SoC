@@ -1,31 +1,42 @@
 # ORFB-0D-U-I-SoC Model
+
 The model allows to predict the cell voltage and power density of a single redox flow battery cell in terms of the applied current and state of charge of the battery.
 
 **Features:**
 * Efficient, physics-based model for the performance prediction of a single RFB cell
 * Electro-osmotic drag accounts for solvent flow through the membrane
 * Activation and concentration overpotentials
-* Validated parameterization for the MV/TMATEMPO electrolyte system
+* Validated parameterization for the MV/TEMPTMA electrolyte system
 
-**Main model inputs:**
+**Model inputs:**
 * Electric current density
 * State of charge
 * Volumetric flow rate
-* Initial electrolyte concentrations
+* Electrolyte concentrations
 * Cell geometry
+* Electrochemical reactions
+* ...
 
 **Main model outputs:**
 * Total cell voltage
-* Power of the cell
+* Power density of the cell
 
 
 ## Getting Started
-The file ZeroDimVoltageCurrentSocModel-MV-TMATEMPO.nb demonstrates the application of the model to an electrochemical cell with the MV/TMATEMPO system and is a good starting point to investigate the model. The main model functionalities are implemented in the file ZeroDimVoltageCurrentSocModel.wl.
+The file *ZeroDimVoltageCurrentSocModel-MV-TEMPTMA.nb* demonstrates the application of the model to an electrochemical cell using the MV/TEMPTMA system and is a good starting point to investigate the model. The main model functionalities are implemented in the file *ZeroDimVoltageCurrentSocModel.wl*.
+
+Alternatively, the model can be executed by passing a single JSON configuration file to the function *runFromJsonString*, which in turn returns the requested model results as a JSON string. An example is provided in the Mathematica notebook *RunModelFromConfigFile.nb*.
 
 An interactive application of the model is provided as a Mathematica CDF file, which can be opened either in Mathematica or with the free Wolfram Player (https://www.wolfram.com/player/).
 
-### Core developers:
+## Documentation
+
+See USER_GUIDE.md
+
+## Core developers
+
 R. P. Schaerer, G. Mourouga
 
-### Acknowledgements: 
-This work is part of the SONAR project supported by the European Union / European Commission funding program Horizon 2020. 
+## Acknowledgements
+
+This work is part of the SONAR project supported by the European Union / European Commission funding program Horizon 2020.

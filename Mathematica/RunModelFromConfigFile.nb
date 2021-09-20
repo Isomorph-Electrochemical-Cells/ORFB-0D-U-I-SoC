@@ -1,0 +1,99 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3231,         91]
+NotebookOptionsPosition[      2662,         73]
+NotebookOutlinePosition[      3060,         89]
+CellTagsIndexPosition[      3017,         86]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Run Model with JSON Configuration for the MV/TEMPTMA System", "Title",
+ CellChangeTimes->{{3.838452697313168*^9, 3.838452705639516*^9}, {
+  3.8395589467120037`*^9, 3.839558994343808*^9}, {3.841127583498166*^9, 
+  3.841127619048914*^9}},ExpressionUUID->"7c7214ad-b030-44fd-802f-\
+071b56b74872"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"Needs", "[", 
+   RowBox[{"\"\<ZeroDimVoltageCurrentSocModel`\>\"", ",", 
+    RowBox[{"FileNameJoin", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"NotebookDirectory", "[", "]"}], ",", 
+       "\"\<ZeroDimVoltageCurrentSocModel.wl\>\""}], "}"}], "]"}]}], "]"}], 
+  ";"}]], "Input",
+ CellChangeTimes->{{3.820213481666593*^9, 3.820213482770463*^9}, {
+  3.824186465917211*^9, 3.824186469790326*^9}, {3.837660223237472*^9, 
+  3.837660235886034*^9}},
+ CellLabel->"In[22]:=",ExpressionUUID->"1a2a9aa2-ca0c-4949-851e-0c56bc31e96a"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"inputJsonString", "=", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+      "\"\</input/mv_tmatempo_example.json\>\""}], ",", "\"\<Text\>\""}], 
+    "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"outputJsonString", "=", 
+   RowBox[{"runFromJsonString", "[", "inputJsonString", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Export", "[", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"NotebookDirectory", "[", "]"}], "<>", 
+     "\"\</output/mv_tmatempo_example.json\>\""}], ",", "outputJsonString", 
+    ",", "\"\<Text\>\""}], "]"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.837066275245894*^9, 3.837066297496046*^9}, 
+   3.837066497190907*^9, {3.837066983793193*^9, 3.837067038578706*^9}, {
+   3.8370673001255074`*^9, 3.837067316058002*^9}, 3.837073708174354*^9, {
+   3.837658857090242*^9, 3.837658864875237*^9}, {3.837681732321039*^9, 
+   3.837681739408236*^9}, {3.839558706518711*^9, 3.8395587100958548`*^9}, {
+   3.8411178632921343`*^9, 3.841117864392116*^9}, {3.841127564440551*^9, 
+   3.841127565518347*^9}},ExpressionUUID->"be4d24b7-29b3-440b-a2f9-\
+5eaf8aa88ba2"]
+}, Open  ]]
+},
+WindowSize->{808, 807},
+WindowMargins->{{166, Automatic}, {Automatic, 30}},
+FrontEndVersion->"12.2 for Mac OS X x86 (64-bit) (December 12, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"b1bf78ed-c596-4402-b1ea-2bc5764c90f4"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 299, 4, 160, "Title",ExpressionUUID->"7c7214ad-b030-44fd-802f-071b56b74872"],
+Cell[882, 28, 568, 13, 52, "Input",ExpressionUUID->"1a2a9aa2-ca0c-4949-851e-0c56bc31e96a"],
+Cell[1453, 43, 1193, 27, 115, "Input",ExpressionUUID->"be4d24b7-29b3-440b-a2f9-5eaf8aa88ba2"]
+}, Open  ]]
+}
+]
+*)
+
