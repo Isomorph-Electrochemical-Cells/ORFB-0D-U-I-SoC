@@ -28,7 +28,7 @@ getModelParamsRules::usage = "getModelParamsRules returns all model parameters a
 (* ::Input::Initialization:: *)
 cellVoltage::usage = "cellVoltage evaluates the total cell voltage for a given state-of-charge and electric current. Example: cellVoltage[0.4,-0.1] yields the cell voltage at SoC=0.4 and a discharging el. current of -0.1 A";
 
-cellVoltageDerivativeFD::usage = "Evaluate cell voltage based on a finite difference approximation. Example: cellVoltageDerivativeFD[T, 0.2, 0.6] evaluates the derivative with respect to the variable T at SoC=0.2 and current=0.6 A";
+cellVoltageDerivativeFD::usage = "Evaluate cell voltage based on a finite difference approximation. Example: cellVoltageDerivativeFD[temp, 0.2, 0.6] evaluates the derivative with respect to the variable temp at SoC=0.2 and current=0.6 A";
 
 cellVoltageNernst::usage = "cellVoltageNernst yields the open circuit potential predicted by the Nernst law.";
 cellVoltageOcv::usage = "cellVoltageOcv evaluates the open circuit potential including the membrane potential for a given state-of-charge. Example: cellVoltage[0.9] yields the OCV at SoC=0.9.";
@@ -60,7 +60,7 @@ nElNeg::usage = "Number of electrons transferred in the electrochemical reaction
 \[Nu]ExchangedIonPos::usage = "Stoichiometric coefficient of the exchanged ion species in the positive electrode";
 cSuppElectrolyteIonNeg::usage = "Molar concentration of the supporting electrolyte that contributes to the concentration of the exchanged ion in the negolyte";
 cSuppElectrolyteIonPos::usage = "Molar concentration of the supporting electrolyte that contributes to the concentration of the exchanged ion in the posolyte";
-T::usage = "Constant temperature of the system [K]";
+temp::usage = "Constant temperature of the system [K]";
 cOxNegSoc0::usage = "Initial molar concentration of oxidizes species in negolyte (at SoC=0) [mol/l]";
 cRedNegSoc0::usage = "Initial molar concentration of reduced species in negolyte (at SoC=0) [mol/l]";
 cOxPosSoc0::usage = "Initial molar concentration of oxidized species in posolyte (at SoC=0) [mol/l]";
@@ -149,6 +149,8 @@ l0::usage="Characteristic pore-scale length scale";
 k0::usage="Characteristic reaction constant";
 km0::usage="Characteristic mass-transfer rate";
 
+fInv::usage="TEST";
+
 
 (* ::Input::Initialization:: *)
 elHeightND::usage="Dimensionless height";
@@ -163,6 +165,8 @@ runFromJsonFile::usage="Run model from a JSON configuration file, e.g. runFromJs
 runFromJsonString::usage="Run model from a JSON string, e.g. runFromJsonString[my_json_string] executes the model with the corresponding configurations";
 initModelFromJsonString::usage="Initialize model parameters from JSON string";
 checkModel::usage="The function checkModel[] performs several consistency checks. In case of any error an assert is triggered.";
+interfaceOptionsToModelOptions::usage="Map interface options to internal model options";
+modelOptionsToInterfaceOptions::usage="Map model options to interface options";
 
 
 (* ::Section:: *)
@@ -174,19 +178,26 @@ Begin["`Private`"];
 
 
 (* ::Input::Initialization:: *)
+(*Internal parameters*)
+\[Nu]RedPos=1;(*[-]*)
+\[Nu]OxPos=-1;(*[-]*)
+\[Nu]RedNeg=1;(*[-]*)
+\[Nu]OxNeg=-1;(*[-]*)
+cRedNegSoc0=0.0;(*[mol/m^3]*)
+cOxPosSoc0=0.0;(*[mol/m^3]*)
+
+
+
+(* ::Input::Initialization:: *)
 (*Set physical constants*)
 R=8.314;(*Ideal gas constant*)
 F=96485;(*Faraday constant*)
-f=F/(R modelParams[T]);(*inverse thermal voltage [V^-1]*)
-fInv=(R modelParams[T])/F;(*thermal voltage [V]*)
+f:=F/(R modelParams[temp]);(*inverse thermal voltage [V^-1]*)
+fInv:=(R modelParams[temp])/F;(*thermal voltage [V]*)
 
 (*Set program constants*)
 idNeg=1;
 idPos=2;
-
-
-(* ::Input:: *)
-(*Number of moles and molar volumes to molar concentrations*)
 
 
 (* ::Input::Initialization:: *)
@@ -248,12 +259,12 @@ ePos0FormalND[soc_] :=f modelParams[ePos0];
 
 eNernstNegND[soc_, elCurrentDensityND_] :=
   Module[{cRedNegND = cRedAvgND[soc, elCurrentDensityND, idNeg], cOxNegND = cOxAvgND[soc, elCurrentDensityND, idNeg]},
-    eNeg0FormalND[soc] + (-1 / modelParams[nElNeg]) Log[((cRedNegND)^modelParams[\[Nu]RedNeg] (cOxNegND)^modelParams[\[Nu]OxNeg]) / (-modelParams[zExchangedIon])^modelParams[\[Nu]ExchangedIonNeg] (modelParams[zRedNeg] cRedNegND + modelParams[zOxNeg] cOxNegND + modelParams[zSuppElectrolyteIon] * modelParams[cSuppElectrolyteIonNeg])^modelParams[\[Nu]ExchangedIonNeg]]
+    eNeg0FormalND[soc] + (-1 / modelParams[nElNeg]) Log[((cRedNegND)^\[Nu]RedNeg (cOxNegND)^\[Nu]OxNeg) / (-modelParams[zExchangedIon])^modelParams[\[Nu]ExchangedIonNeg] (modelParams[zRedNeg] cRedNegND + modelParams[zOxNeg] cOxNegND + modelParams[zSuppElectrolyteIon] * modelParams[cSuppElectrolyteIonNeg])^modelParams[\[Nu]ExchangedIonNeg]]
   ];
 
 eNernstPosND[soc_, elCurrentDensityND_] :=
   Module[{cRedPosND = cRedAvgND[soc, elCurrentDensityND, idPos], cOxPosND = cOxAvgND[soc, elCurrentDensityND, idPos]},
-    ePos0FormalND[soc] + (-1 / modelParams[nElPos]) Log[((cRedPosND)^modelParams[\[Nu]RedPos] (cOxPosND)^modelParams[\[Nu]OxPos]) / (-modelParams[zExchangedIon])^modelParams[\[Nu]ExchangedIonPos] (modelParams[zRedPos] cRedPosND + modelParams[zOxPos] cOxPosND + modelParams[zSuppElectrolyteIon] * modelParams[cSuppElectrolyteIonPos])^modelParams[\[Nu]ExchangedIonNeg]]
+    ePos0FormalND[soc] + (-1 / modelParams[nElPos]) Log[((cRedPosND)^\[Nu]RedPos (cOxPosND)^\[Nu]OxPos) / (-modelParams[zExchangedIon])^modelParams[\[Nu]ExchangedIonPos] (modelParams[zRedPos] cRedPosND + modelParams[zOxPos] cOxPosND + modelParams[zSuppElectrolyteIon] * modelParams[cSuppElectrolyteIonPos])^modelParams[\[Nu]ExchangedIonNeg]]
   ];
 
 eMembraneND[soc_, elCurrentDensityND_] :=
@@ -380,102 +391,144 @@ limElCurrent[soc_, elCurrentDensity_] :=
 
 (* ::Input::Initialization:: *)
 Options[initModel] = {
-zOxPos-> 2, (*[-]*)
-zRedPos-> 1, (*[-]*)
-zOxNeg-> 2, (*[-]*)
-zRedNeg-> 1, (*[-]*)
-zExchangedIon-> -1, (*[-]*)
-zSuppElectrolyteIon-> 1,(*[-]*)
-\[Nu]RedPos-> 1,(*[-]*)
-\[Nu]OxPos-> -1,(*[-]*)
-\[Nu]RedNeg-> 1,(*[-]*)
-\[Nu]OxNeg-> -1,(*[-]*)
-nElPos-> 1,(*[-]*)
-nElNeg-> 1,(*[-]*)
-\[Nu]ExchangedIonPos-> 0,(*[-]*)
-\[Nu]ExchangedIonNeg-> 0,(*[-]*)
-cSuppElectrolyteIonNeg-> 0,(*[mol/m^3]*)
-cSuppElectrolyteIonPos-> 0,(*[mol/m^3]*)
-T ->273.15+22.0,(*[K]*)
-electrolyteVolSoc0 -> 0.01/10^3,(*[m^3]*)
-elLength -> 0.4 / 100,(*[m]*)
-elWidth -> 2.236 / 100,(*[m]*)
-elHeight -> 2.236 / 100,(*[m]*)
-specElectrodeSurfArea-> 2* 10^5,(*[m^-1]*)
-flowRate -> 16*1/(10^6*60),(*[ml/min]*)
-ohmicCellResistance -> 0.286,(*[V/A]*)
-eNeg0 -> -0.66,(*[V]*)
-ePos0 -> 0.62,(*[V]*)
-kneg -> 3.3 * 10^-5,(*[m/s]*)
-kpos -> 4.2 * 10^-5,(*[m/s]*)
-\[Kappa]s -> 6,(*[-]*)
-cOxNegSoc0 -> 1.49*10^3,(*[mol/m^3]*)
-cRedNegSoc0 -> 0.0,(*[mol/m^3]*)
-cOxPosSoc0 -> 0.0,(*[mol/m^3]*)
-cRedPosSoc0 -> 1.12*10^3,(*[mol/m^3]*)
-massTransferCoeff1-> (3.3* 10^-5),(*[m/s]^(1-massTransferCoeff2)*)
-massTransferCoeff2-> 0.9,(*[-]*)
-molarMassSolvent -> 0.01801528,(*[kg/mol]*)
-molarMassOxNeg -> 0.25716,(*[kg/mol]*)
-molarMassRedNeg-> 0.22171,(*[kg/mol]*)
-molarMassOxPos-> 0.285253,(*[kg/mol]*)
-molarMassRedPos -> 0.249803,(*[kg/mol]*)
-partialMolarVolSolvent-> 0.0180555*10^-3,(*[m^3/mol]*)
-partialMolarVolOxNeg-> 0.189*10^-3,(*[m^3/mol]*)
-partialMolarVolRedNeg-> 0.163*10^-3,(*[m^3/mol]*)
-partialMolarVolOxPos-> 0.233*10^-3,(*[m^3/mol]*)
-partialMolarVolRedPos-> 0.212*10^-3,(*[m^3/mol]*)
-partialMolarVolSupportingElectrolyteNeg-> 0.0,(*[m^3/mol]*)
-partialMolarVolSupportingElectrolytePos-> 0.0,(*[m^3/mol]*)
-membranePotential-> "thermodynamics"
+  zOxPos -> 2, (*[-]*)
+  zRedPos -> 1, (*[-]*)
+  zOxNeg -> 2, (*[-]*)
+  zRedNeg -> 1, (*[-]*)
+  zExchangedIon -> -1, (*[-]*)
+  zSuppElectrolyteIon -> 1,(*[-]*)
+  nElPos -> 1,(*[-]*)
+  nElNeg -> 1,(*[-]*)
+  \[Nu]ExchangedIonPos -> 0,(*[-]*)
+  \[Nu]ExchangedIonNeg -> 0,(*[-]*)
+  cSuppElectrolyteIonNeg -> 0,(*[mol/m^3]*)
+  cSuppElectrolyteIonPos -> 0,(*[mol/m^3]*)
+  temp -> (273.15 + 22.0),(*[K]*)
+  electrolyteVolSoc0 -> 0.01 / 10^3,(*[m^3]*)
+  elLength -> 0.4 / 100,(*[m]*)
+  elWidth -> 2.236 / 100,(*[m]*)
+  elHeight -> 2.236 / 100,(*[m]*)
+  specElectrodeSurfArea -> 2 * 10^5,(*[m^-1]*)
+  flowRate -> 16 * 1 / (10^6 * 60),(*[ml/min]*)
+  ohmicCellResistance -> 0.286,(*[V/A]*)
+  eNeg0 -> -0.66,(*[V]*)
+  ePos0 -> 0.62,(*[V]*)
+  kneg -> 3.3 * 10^-5,(*[m/s]*)
+  kpos -> 4.2 * 10^-5,(*[m/s]*)
+  \[Kappa]s -> 6,(*[-]*)
+  cOxNegSoc0 -> 1.49 * 10^3,(*[mol/m^3]*)
+  cRedPosSoc0 -> 1.12 * 10^3,(*[mol/m^3]*)
+  massTransferCoeff1 -> (3.3 * 10^-5),(*[m/s]^(1-massTransferCoeff2)*)
+  massTransferCoeff2 -> 0.9,(*[-]*)
+  molarMassSolvent -> 0.01801528,(*[kg/mol]*)
+  molarMassOxNeg -> 0.25716,(*[kg/mol]*)
+  molarMassRedNeg -> 0.22171,(*[kg/mol]*)
+  molarMassOxPos -> 0.285253,(*[kg/mol]*)
+  molarMassRedPos -> 0.249803,(*[kg/mol]*)
+  partialMolarVolSolvent -> 0.0180555 * 10^-3,(*[m^3/mol]*)
+  partialMolarVolOxNeg -> 0.189 * 10^-3,(*[m^3/mol]*)
+  partialMolarVolRedNeg -> 0.163 * 10^-3,(*[m^3/mol]*)
+  partialMolarVolOxPos -> 0.233 * 10^-3,(*[m^3/mol]*)
+  partialMolarVolRedPos -> 0.212 * 10^-3,(*[m^3/mol]*)
+  partialMolarVolSupportingElectrolyteNeg -> 0.0,(*[m^3/mol]*)
+  partialMolarVolSupportingElectrolytePos -> 0.0,(*[m^3/mol]*)
+  membranePotential -> "thermodynamics"
 };
 
-interfaceOptionsToModelOptions={
-"charge_number_ox_pos"->zOxPos,
-"charge_number_red_pos"->zRedPos,
-"charge_number_ox_neg"->zOxNeg,
-"charge_number_red_neg"-> zRedNeg,
-"charge_number_exchanged_ion"-> zExchangedIon,
-"charge_number_supporting_electrolyte_ion"-> zSuppElectrolyteIon,
-"stoichiometric_coefficient_exchanged_ion_pos"-> \[Nu]ExchangedIonPos,
-"number_electron_transfer_pos"->nElPos ,
-"stoichiometric_coefficient_exchanged_ion_neg"-> \[Nu]ExchangedIonNeg,
-"number_electron_transfer_neg"-> nElNeg,
-"molar_concentration_supporting_electrolyte_ion_neg"-> cSuppElectrolyteIonNeg,
-"molar_concentration_supporting_electrolyte_ion_pos"-> cSuppElectrolyteIonPos,
-"ohmic_cell_resistance"->ohmicCellResistance,
-"temperature"-> T,
-"electrolyte_volume"-> electrolyteVolSoc0,
-"electrode_length"-> elLength,
-"electrode_width"-> elWidth,
-"electrode_height"-> elHeight,
-"specific_surface_area"->specElectrodeSurfArea,
-"volumetric_flow_rate"-> flowRate,
-"formal_potential_neg"-> eNeg0,
-"formal_potential_pos"-> ePos0,
-"reaction_rate_constant_neg"-> kneg,
-"reaction_rate_constant_pos"-> kpos,
-"electro_osmotic_drag_coefficient"-> \[Kappa]s,
-"molar_concentration_ox_neg_soc0"-> cOxNegSoc0,
-"molar_concentration_red_pos_soc0"-> cRedPosSoc0,
-"mass_transfer_coefficient_a"->massTransferCoeff1 ,
-"mass_transfer_coefficient_b"-> massTransferCoeff2,
-"molar_mass_ox_neg"-> molarMassOxNeg,
-"molar_mass_red_neg"-> molarMassRedNeg,
-"molar_mass_ox_pos"-> molarMassOxPos,
-"molar_mass_red_pos"-> molarMassRedPos,
-"molar_mass_solvent"-> molarMassSolvent,
-"molar_mass_supporting_electrolyte"-> molarMassSupportingElectrolyte,
-"partial_molar_volume_solvent"-> partialMolarVolSolvent,
-"partial_molar_volume_ox_neg"-> partialMolarVolOxNeg,
-"partial_molar_volume_red_neg"-> partialMolarVolRedNeg,
-"partial_molar_volume_ox_pos"-> partialMolarVolOxPos,
-"partial_molar_volume_red_pos"-> partialMolarVolRedPos,
-"partial_molar_volume_supporting_electrolyte_neg"-> partialMolarVolSupportingElectrolyteNeg,
-"partial_molar_volume_supporting_electrolyte_pos"-> partialMolarVolSupportingElectrolytePos,
-"membrane_potential"->membranePotential
+interfaceOptionsToModelOptions = {
+  "charge_number_ox_pos" -> zOxPos,
+  "charge_number_red_pos" -> zRedPos,
+  "charge_number_ox_neg" -> zOxNeg,
+  "charge_number_red_neg" -> zRedNeg,
+  "charge_number_exchanged_ion" -> zExchangedIon,
+  "charge_number_supporting_electrolyte_ion" -> zSuppElectrolyteIon,
+  "stoichiometric_coefficient_exchanged_ion_pos" -> \[Nu]ExchangedIonPos,
+  "number_electron_transfer_pos" -> nElPos,
+  "stoichiometric_coefficient_exchanged_ion_neg" -> \[Nu]ExchangedIonNeg,
+  "number_electron_transfer_neg" -> nElNeg,
+  "molar_concentration_supporting_electrolyte_ion_neg" -> cSuppElectrolyteIonNeg,
+  "molar_concentration_supporting_electrolyte_ion_pos" -> cSuppElectrolyteIonPos,
+  "ohmic_cell_resistance" -> ohmicCellResistance,
+  "temperature" -> temp,
+  "electrolyte_volume" -> electrolyteVolSoc0,
+  "electrode_length" -> elLength,
+  "electrode_width" -> elWidth,
+  "electrode_height" -> elHeight,
+  "specific_surface_area" -> specElectrodeSurfArea,
+  "volumetric_flow_rate" -> flowRate,
+  "formal_potential_neg" -> eNeg0,
+  "formal_potential_pos" -> ePos0,
+  "reaction_rate_constant_neg" -> kneg,
+  "reaction_rate_constant_pos" -> kpos,
+  "electro_osmotic_drag_coefficient" -> \[Kappa]s,
+  "molar_concentration_ox_neg_soc0" -> cOxNegSoc0,
+  "molar_concentration_red_pos_soc0" -> cRedPosSoc0,
+  "mass_transfer_coefficient_a" -> massTransferCoeff1,
+  "mass_transfer_coefficient_b" -> massTransferCoeff2,
+  "molar_mass_ox_neg" -> molarMassOxNeg,
+  "molar_mass_red_neg" -> molarMassRedNeg,
+  "molar_mass_ox_pos" -> molarMassOxPos,
+  "molar_mass_red_pos" -> molarMassRedPos,
+  "molar_mass_solvent" -> molarMassSolvent,
+  "molar_mass_supporting_electrolyte" -> molarMassSupportingElectrolyte,
+  "partial_molar_volume_solvent" -> partialMolarVolSolvent,
+  "partial_molar_volume_ox_neg" -> partialMolarVolOxNeg,
+  "partial_molar_volume_red_neg" -> partialMolarVolRedNeg,
+  "partial_molar_volume_ox_pos" -> partialMolarVolOxPos,
+  "partial_molar_volume_red_pos" -> partialMolarVolRedPos,
+  "partial_molar_volume_supporting_electrolyte_neg" -> partialMolarVolSupportingElectrolyteNeg,
+  "partial_molar_volume_supporting_electrolyte_pos" -> partialMolarVolSupportingElectrolytePos,
+  "membrane_potential" -> membranePotential
 };
 
+modelOptionsToInterfaceOptions = {
+  zOxPos -> "charge_number_ox_pos",
+  zRedPos -> "charge_number_red_pos",
+  zOxNeg -> "charge_number_ox_neg",
+  zRedNeg -> "charge_number_red_neg",
+  zExchangedIon -> "charge_number_exchanged_ion",
+  zSuppElectrolyteIon -> "charge_number_supporting_electrolyte_ion",
+  \[Nu]ExchangedIonPos -> "stoichiometric_coefficient_exchanged_ion_pos",
+  nElPos -> "number_electron_transfer_pos",
+  \[Nu]ExchangedIonNeg -> "stoichiometric_coefficient_exchanged_ion_neg",
+  nElNeg -> "number_electron_transfer_neg",
+  cSuppElectrolyteIonNeg -> "molar_concentration_supporting_electrolyte_ion_neg",
+  cSuppElectrolyteIonPos -> "molar_concentration_supporting_electrolyte_ion_pos",
+  ohmicCellResistance -> "ohmic_cell_resistance",
+  temp -> "temperature",
+  electrolyteVolSoc0 -> "electrolyte_volume",
+  elLength -> "electrode_length",
+  elWidth -> "electrode_width",
+  elHeight -> "electrode_height",
+  specElectrodeSurfArea -> "specific_surface_area",
+  flowRate -> "volumetric_flow_rate",
+  eNeg0 -> "formal_potential_neg",
+  ePos0 -> "formal_potential_pos",
+  kneg -> "reaction_rate_constant_neg",
+  kpos -> "reaction_rate_constant_pos",
+  \[Kappa]s -> "electro_osmotic_drag_coefficient",
+  cOxNegSoc0 -> "molar_concentration_ox_neg_soc0",
+  cRedPosSoc0 -> "molar_concentration_red_pos_soc0",
+  massTransferCoeff1 -> "mass_transfer_coefficient_a",
+  massTransferCoeff2 -> "mass_transfer_coefficient_b",
+  molarMassOxNeg -> "molar_mass_ox_neg",
+  molarMassRedNeg -> "molar_mass_red_neg",
+  molarMassOxPos -> "molar_mass_ox_pos",
+  molarMassRedPos -> "molar_mass_red_pos",
+  molarMassSolvent -> "molar_mass_solvent",
+  molarMassSupportingElectrolyte -> "molar_mass_supporting_electrolyte",
+  partialMolarVolSolvent -> "partial_molar_volume_solvent",
+  partialMolarVolOxNeg -> "partial_molar_volume_ox_neg",
+  partialMolarVolRedNeg -> "partial_molar_volume_red_neg",
+  partialMolarVolOxPos -> "partial_molar_volume_ox_pos",
+  partialMolarVolRedPos -> "partial_molar_volume_red_pos",
+  partialMolarVolSupportingElectrolyteNeg -> "partial_molar_volume_supporting_electrolyte_neg",
+  partialMolarVolSupportingElectrolytePos -> "partial_molar_volume_supporting_electrolyte_pos",
+  membranePotential -> "membrane_potential"
+};
+
+
+(* ::Input::Initialization:: *)
 getUniqueOptions[lst_] :=
     Association[lst];
 assocToRules[assoc_] :=
@@ -504,9 +557,9 @@ initImpl :=
     electrodeVol = modelParams[elLength] * modelParams[elWidth] * modelParams[elHeight];(*[m^3]*)
     memArea = modelParams[elWidth] * modelParams[elHeight];(*[m^2]*)
     totElectrodeArea = modelParams[specElectrodeSurfArea] * electrodeVol;(*[m^2]*)
-    nOxPosSoc0 = modelParams[cOxPosSoc0] * modelParams[electrolyteVolSoc0];(*[mol]*)
+    nOxPosSoc0 = cOxPosSoc0 * modelParams[electrolyteVolSoc0];(*[mol]*)
     nOxNegSoc0 = modelParams[cOxNegSoc0] * modelParams[electrolyteVolSoc0];(*[mol]*)
-    nRedNegSoc0 = modelParams[cRedNegSoc0] * modelParams[electrolyteVolSoc0];(*[mol]*)
+    nRedNegSoc0 = cRedNegSoc0 * modelParams[electrolyteVolSoc0];(*[mol]*)
     nRedPosSoc0 = modelParams[cRedPosSoc0] * modelParams[electrolyteVolSoc0];(*[mol]*)
     nSolventNegSoc0 = (modelParams[electrolyteVolSoc0] - nOxNegSoc0 * modelParams[partialMolarVolOxNeg]) / modelParams[partialMolarVolSolvent];(*[mol]*)
     nSolventPosSoc0 = (modelParams[electrolyteVolSoc0] - nRedPosSoc0 * modelParams[partialMolarVolRedPos]) / modelParams[partialMolarVolSolvent];(*[mol]*)
