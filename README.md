@@ -27,11 +27,12 @@ The file *ZeroDimVoltageCurrentSocModel-MV-TEMPTMA.nb* demonstrates the applicat
 
 Alternatively, the model can be executed by passing a single JSON configuration file to the function *runFromJsonString*, which in turn returns the requested model results as a JSON string. An example is provided in the Mathematica notebook *RunModelFromConfigFile.nb*.
 
-An interactive application of the model is provided as a Mathematica CDF file, which can be opened either in Mathematica or with the free Wolfram Player (https://www.wolfram.com/player/).
+An interactive application of the model is provided as a Mathematica CDF file, which can be opened either in Mathematica or with the free Wolfram Player (https://www.wolfram.com/player/). Note that currently not all functions of the interactive CDF application are running correctly within the Wolfram Player. Therefore we recommend to use a full Mathematica installation to run the interactive application.
 
 ## Documentation
 
 See USER_GUIDE.md
+
 
 ## License
 
