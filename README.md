@@ -33,6 +33,10 @@ An interactive application of the model is provided as a Mathematica CDF file, w
 
 See USER_GUIDE.md
 
+## License
+
+The ORFB-0D-U-I-SOC model implementation is licensed under the BSD 3-Clause License (see LICENSE.txt), except for the files contained in the CDF folder, which are licensed under the Creative Commons BY-SA Attribution-ShareAlike license (for more information, visit www.wolfram.com/cdf/adopting-cdf/licensing-options.html).
+
 ## Core developers
 
 R. P. Schaerer, G. Mourouga

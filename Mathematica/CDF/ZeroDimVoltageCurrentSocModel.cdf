@@ -23,10 +23,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[      1088,         20]
-NotebookDataLength[    169414,       3027]
-NotebookOptionsPosition[    169896,       3022]
-NotebookOutlinePosition[    170377,       3042]
-CellTagsIndexPosition[    170334,       3039]
+NotebookDataLength[    169824,       3036]
+NotebookOptionsPosition[    170306,       3031]
+NotebookOutlinePosition[    170787,       3051]
+CellTagsIndexPosition[    170744,       3048]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -251,7 +251,9 @@ modelOptionsToInterfaceOptions]]];
              Export[$CellContext`file, $CellContext`data$$, "JSON"], Null], 
            Method -> "Queued"], 
           Button[
-          "Reset parameters", $CellContext`cOxNegSoc0Value$$ = \
+          "Reset parameters", $CellContext`soc$$ = 
+            0.5; $CellContext`flowRateValue$$ = \
+$CellContext`flowRateDefaultValue; $CellContext`cOxNegSoc0Value$$ = \
 $CellContext`cOxNegSoc0DefaultValue; $CellContext`cRedPosSoc0Value$$ = \
 $CellContext`cRedPosSoc0DefaultValue; \
 $CellContext`cSuppElectrolyteIonNegValue$$ = \
@@ -520,11 +522,12 @@ $CellContext`zOxNegValue$$ = 2, $CellContext`zOxPosValue$$ =
          Typeset`initDone$$, Typeset`skipInitDone$$}, 
        "Body" :> (
         ZeroDimVoltageCurrentSocModel`initModel[{
-          Symbol["cOxNegSoc0"] -> $CellContext`cOxNegSoc0Value$$ 10^3, 
-           Symbol["cRedPosSoc0"] -> $CellContext`cRedPosSoc0Value$$ 10^3, 
+          ZeroDimVoltageCurrentSocModel`cOxNegSoc0 -> \
+$CellContext`cOxNegSoc0Value$$ 10^3, 
+           ZeroDimVoltageCurrentSocModel`cRedPosSoc0 -> \
+$CellContext`cRedPosSoc0Value$$ 10^3, 
            ZeroDimVoltageCurrentSocModel`flowRate -> \
 $CellContext`flowRateValue$$/(60 10^6), 
-           
            ZeroDimVoltageCurrentSocModel`ohmicCellResistance -> \
 $CellContext`ohmicCellResistanceValue$$, 
            ZeroDimVoltageCurrentSocModel`kneg -> $CellContext`kNegValue$$, 
@@ -562,6 +565,7 @@ $CellContext`cSuppElectrolyteIonNegValue$$ 10^3,
 $CellContext`cSuppElectrolyteIonPosValue$$ 10^3, 
            ZeroDimVoltageCurrentSocModel`partialMolarVolSolvent -> \
 $CellContext`partialMolarVolSolventValue$$, 
+           
            ZeroDimVoltageCurrentSocModel`partialMolarVolOxPos -> \
 $CellContext`partialMolarVolOxPosValue$$, 
            ZeroDimVoltageCurrentSocModel`partialMolarVolRedPos -> \
@@ -772,7 +776,9 @@ modelOptionsToInterfaceOptions]]];
               Export[$CellContext`file, $CellContext`data$$, "JSON"], Null], 
             Method -> "Queued"], 
            Button[
-           "Reset parameters", $CellContext`cOxNegSoc0Value$$ = \
+           "Reset parameters", $CellContext`soc$$ = 
+             0.5; $CellContext`flowRateValue$$ = \
+$CellContext`flowRateDefaultValue; $CellContext`cOxNegSoc0Value$$ = \
 $CellContext`cOxNegSoc0DefaultValue; $CellContext`cRedPosSoc0Value$$ = \
 $CellContext`cRedPosSoc0DefaultValue; \
 $CellContext`cSuppElectrolyteIonNegValue$$ = \
@@ -889,6 +895,7 @@ convective flow) [m]"}, 0.001, 0.1, Appearance -> "Labeled", ControlPlacement ->
 \[Nu]\), \(ex, -\)]\) [-]"}, -5, 5, 1, Appearance -> "Labeled", 
           ControlPlacement -> 
           19}, {{$CellContext`\[Nu]ExchangedIonPosValue$$, 0, 
+           
            "Stoichiometric coefficient of exchanged ion \!\(\*SubscriptBox[\(\
 \[Nu]\), \(ex, +\)]\) [-]"}, -5, 5, 1, Appearance -> "Labeled", 
           ControlPlacement -> 
@@ -1314,7 +1321,6 @@ context `3` may shadow or be shadowed by other definitions."],
            "Standard half-cell potential for MV [V]"], 
           TagSet[ZeroDimVoltageCurrentSocModel`ePos0, 
            MessageName[ZeroDimVoltageCurrentSocModel`ePos0, "shdw"], 
-           
            "Symbol `1` appears in multiple contexts `2`; definitions in \
 context `3` may shadow or be shadowed by other definitions."], 
           TagSet[ZeroDimVoltageCurrentSocModel`ePos0, 
@@ -1377,6 +1383,7 @@ context `3` may shadow or be shadowed by other definitions."],
           TagSet[ZeroDimVoltageCurrentSocModel`massTransferCoeff2, 
            MessageName[
            ZeroDimVoltageCurrentSocModel`massTransferCoeff2, "usage"], 
+           
            "Coefficient in the empirical mass transfer model \
 \!\(\*SubscriptBox[\(k\), \
 \(m\)]\)=(massTransferCoeff1*\!\(\*SuperscriptBox[\(v\), \(massTransferCoeff2\
@@ -1413,8 +1420,7 @@ in the negative half-cell"],
 context `3` may shadow or be shadowed by other definitions."], 
           TagSet[ZeroDimVoltageCurrentSocModel`molarMassOxPos, 
            MessageName[ZeroDimVoltageCurrentSocModel`molarMassOxPos, "usage"],
-            
-           "Molar mass of oxidized salt (e.g. TMATEMPO dichloride \
+            "Molar mass of oxidized salt (e.g. TMATEMPO dichloride \
 \!\(\*SubscriptBox[\(TCl\), \(2\)]\)) in the positive half-cell"], 
           TagSet[ZeroDimVoltageCurrentSocModel`molarMassRedPos, 
            MessageName[ZeroDimVoltageCurrentSocModel`molarMassRedPos, "shdw"],
@@ -1482,6 +1488,7 @@ context `3` may shadow or be shadowed by other definitions."],
           ZeroDimVoltageCurrentSocModel`\
 partialMolarVolSupportingElectrolyteNeg, 
            MessageName[
+           
            ZeroDimVoltageCurrentSocModel`\
 partialMolarVolSupportingElectrolyteNeg, "usage"], 
            "Molar volume of the supporting electrolyte in the negative \
@@ -1619,7 +1626,7 @@ SoC=0) [mol/l]"], ZeroDimVoltageCurrentSocModel`Private`nRedPosSoc0 =
           Module[{}, ZeroDimVoltageCurrentSocModel`Private`\[Nu]Ox = -1; 
             ZeroDimVoltageCurrentSocModel`Private`\[Nu]Red = 1; 
             ZeroDimVoltageCurrentSocModel`\[Eta]0 = 
-             ZeroDimVoltageCurrentSocModel`Private`fInv; 
+             ZeroDimVoltageCurrentSocModel`fInv; 
             ZeroDimVoltageCurrentSocModel`c0 = 10^3; 
             ZeroDimVoltageCurrentSocModel`\[Rho]0 = 10^3; 
             ZeroDimVoltageCurrentSocModel`b0 = 
@@ -1659,11 +1666,13 @@ SoC=0) [mol/l]"], ZeroDimVoltageCurrentSocModel`Private`nRedPosSoc0 =
           TagSet[ZeroDimVoltageCurrentSocModel`\[Eta]0, 
            MessageName[ZeroDimVoltageCurrentSocModel`\[Eta]0, "usage"], 
            "Characteristic overpotential"], 
-          ZeroDimVoltageCurrentSocModel`Private`fInv := (
+          ZeroDimVoltageCurrentSocModel`fInv := (
             ZeroDimVoltageCurrentSocModel`Private`R 
             ZeroDimVoltageCurrentSocModel`Private`modelParams[
              ZeroDimVoltageCurrentSocModel`temp])/
            ZeroDimVoltageCurrentSocModel`Private`F, 
+          TagSet[ZeroDimVoltageCurrentSocModel`fInv, 
+           MessageName[ZeroDimVoltageCurrentSocModel`fInv, "usage"], "TEST"], 
           ZeroDimVoltageCurrentSocModel`Private`R = 8.314, 
           ZeroDimVoltageCurrentSocModel`Private`F = 96485, 
           ZeroDimVoltageCurrentSocModel`c0 = 1000, 
@@ -1790,7 +1799,6 @@ direction"], ZeroDimVoltageCurrentSocModel`elWidthND = 2.236,
           ZeroDimVoltageCurrentSocModel`Private`nEl = {1, 1}, 
           ZeroDimVoltageCurrentSocModel`plotCellVoltageVsElCurrentDensity[
             Pattern[ZeroDimVoltageCurrentSocModel`Private`opts, 
-             
              OptionsPattern[{
               ZeroDimVoltageCurrentSocModel`plotCellVoltageVsElCurrentDensity,
                 Plot}]]] := 
@@ -1904,7 +1912,7 @@ and 0.4"], ZeroDimVoltageCurrentSocModel`cellVoltageOcv[
                ZeroDimVoltageCurrentSocModel`limElCurrent[
                ZeroDimVoltageCurrentSocModel`Private`soc, 
                 ZeroDimVoltageCurrentSocModel`Private`elCurrent]], 
-             ZeroDimVoltageCurrentSocModel`Private`fInv 
+             ZeroDimVoltageCurrentSocModel`fInv 
              ZeroDimVoltageCurrentSocModel`Private`cellVoltageOcvND[
               ZeroDimVoltageCurrentSocModel`Private`soc, 
                ZeroDimVoltageCurrentSocModel`Private`elCurrent/(
@@ -2040,6 +2048,7 @@ limiting electric current (in Ampere) at SoC=0.7"],
             ZeroDimVoltageCurrentSocModel`Private`superficialVelocityND), 
           TagSet[ZeroDimVoltageCurrentSocModel`cRedAvgND, 
            MessageName[ZeroDimVoltageCurrentSocModel`cRedAvgND, "usage"], 
+           
            "Arithmetic average of molar concentration of reduced species \
 between the inflow and outflow boundaries. E.g., cRedAvgND[soc, \
 elCurrentDensityND, domId] yields the molar concentration for the \
@@ -2239,7 +2248,6 @@ in the negolyte."], ZeroDimVoltageCurrentSocModel`cOxNeg[
            ZeroDimVoltageCurrentSocModel`Private`soc], 
           TagSet[ZeroDimVoltageCurrentSocModel`cOxPos, 
            MessageName[ZeroDimVoltageCurrentSocModel`cOxPos, "usage"], 
-           
            "Molar concentration of the oxidized species in the posolyte in \
 [mol/m^3]."], ZeroDimVoltageCurrentSocModel`Private`cOxOutND[
             Pattern[ZeroDimVoltageCurrentSocModel`Private`soc, 
@@ -2276,6 +2284,7 @@ limElCurrentDensityDischarging[
           TagSet[ZeroDimVoltageCurrentSocModel`limElCurrentDischarging, 
            MessageName[
            ZeroDimVoltageCurrentSocModel`limElCurrentDischarging, "usage"], 
+           
            "limElCurrentDischarging yields the limiting electric \
 (discharging) current at a specified SoC, e.g. limElCurrentDischarging[0.5] \
 yields the limiting electric current (in Ampere) at SoC=0.5"], 
@@ -2722,7 +2731,6 @@ lstLimElCurrentDischarging, ZeroDimVoltageCurrentSocModel`Private`i], 0}, {-
                     Part[ZeroDimVoltageCurrentSocModel`Private`\
 lstLimElCurrentDischarging, ZeroDimVoltageCurrentSocModel`Private`i], 
                     ZeroDimVoltageCurrentSocModel`Private`maxVoltage (-
-                    
                     ZeroDimVoltageCurrentSocModel`Private`\
 minElCurrentDischarging)}}], Dashed], {
                 ZeroDimVoltageCurrentSocModel`Private`i, 1, 
@@ -2843,6 +2851,7 @@ analogous to plotCellVoltageVsElCurrentDensity"],
             ZeroDimVoltageCurrentSocModel`\
 partialMolarVolSupportingElectrolyteNeg, 
             "partial_molar_volume_supporting_electrolyte_pos" -> 
+            
             ZeroDimVoltageCurrentSocModel`\
 partialMolarVolSupportingElectrolytePos, "membrane_potential" -> 
             ZeroDimVoltageCurrentSocModel`membranePotential}, 
@@ -2952,7 +2961,7 @@ partialMolarVolSupportingElectrolytePos ->
            ZeroDimVoltageCurrentSocModel`modelOptionsToInterfaceOptions, 
             "usage"], 
            "Map model options to interface options"], \
-$CellContext`cOxNegSoc0DefaultValue = 
+$CellContext`flowRateDefaultValue = 16, $CellContext`cOxNegSoc0DefaultValue = 
           1.49, $CellContext`cRedPosSoc0DefaultValue = 
           1.12, $CellContext`cSuppElectrolyteIonNegDefaultValue = 
           0, $CellContext`cSuppElectrolyteIonPosDefaultValue = 
@@ -3017,8 +3026,8 @@ partialMolarVolSupportingElectrolytePosDefaultValue =
     Deployed->True,
     StripOnInput->False],
    Manipulate`InterpretManipulate[1]],
-  DynamicModuleValues:>{}]],ExpressionUUID->"67509c22-083d-4a0c-8bdf-\
-4f79fd90b492"]
+  DynamicModuleValues:>{}]],ExpressionUUID->"120bc2fc-6adf-4cf6-bdfb-\
+9595caafae65"]
 },
 Visible->True,
 ScrollingOptions->{"VerticalScrollRange"->Fit},
@@ -3028,7 +3037,7 @@ CellContext->Notebook,
 TrackCellChangeTimes->False,
 FrontEndVersion->"12.2 for Mac OS X x86 (64-bit) (December 12, 2020)",
 StyleDefinitions->"Default.nb",
-ExpressionUUID->"8916adc4-44d0-4b70-9d63-ad761bc8551b"
+ExpressionUUID->"aa3f6767-b8b1-47aa-8509-7f8f15f7f19c"
 ]
 (* End of Notebook Content *)
 
@@ -3041,11 +3050,11 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[1488, 33, 168404, 2987, 24, InheritFromParent,ExpressionUUID->"67509c22-083d-4a0c-8bdf-4f79fd90b492"]
+Cell[1488, 33, 168814, 2996, 24, InheritFromParent,ExpressionUUID->"120bc2fc-6adf-4cf6-bdfb-9595caafae65"]
 }
 ]
 *)
 
 (* End of internal cache information *)
 
-(* NotebookSignature bx0kymyInRoKDDwetBD6j6Bj *)
+(* NotebookSignature LxTW39lWYFAuWB1eKcd9#L0J *)
